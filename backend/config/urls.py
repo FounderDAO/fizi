@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/v1/shops/', include('shops.urls')),
     path('api/v1/chat/', include('chat.urls')),
     path('api/v1/billing/', include('billing.urls')),
+    path('api/v1/ai/', include('ai.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
