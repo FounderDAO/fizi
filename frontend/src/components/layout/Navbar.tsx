@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Search, Heart, MessageCircle, User, PlusCircle } from 'lucide-react';
+import { useState } from 'react';
 
 const locales = [
   { code: 'ru', label: 'RU' },
@@ -17,11 +18,21 @@ export default function Navbar() {
   const router = useRouter();
 
   const currentLocale = locales.find((l) => pathname.startsWith(`/${l.code}`))?.code || 'ru';
+  const [searchQuery, setSearchQuery] = useState('');
 
   const switchLocale = (locale: string) => {
     const segments = pathname.split('/');
     segments[1] = locale;
     router.push(segments.join('/'));
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/${currentLocale}/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push(`/${currentLocale}/search`);
+    }
   };
 
   return (
@@ -37,16 +48,20 @@ export default function Navbar() {
           </Link>
 
           {/* Search bar (desktop) */}
-          <div className="hidden md:flex flex-1 max-w-xl mx-8">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-8">
             <div className="relative w-full">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder={t('search')}
                 className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
-              <Search className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+              <button type="submit" className="absolute right-3 top-2.5">
+                <Search className="h-4 w-4 text-gray-400 hover:text-indigo-600" />
+              </button>
             </div>
-          </div>
+          </form>
 
           {/* Nav links */}
           <div className="flex items-center gap-4">
