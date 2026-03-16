@@ -1,19 +1,23 @@
 from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Category
 from .serializers import CategorySerializer, CategoryFlatSerializer
 
 
+class CategoryTreeView(APIView):
+    """Returns full category tree (root categories with children)."""
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        roots = Category.objects.filter(parent=None, is_active=True).order_by('order')
+        serializer = CategorySerializer(roots, many=True)
+        return Response(serializer.data)
+
+
 class CategoryListView(generics.ListAPIView):
-    """Returns root categories with nested children."""
-    serializer_class = CategorySerializer
+    """Flat list of all categories (no pagination)."""
+    queryset = Category.objects.filter(is_active=True).order_by('order')
+    serializer_class = CategoryFlatSerializer
     permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        return Category.objects.filter(parent=None, is_active=True)
-
-
-class CategoryDetailView(generics.RetrieveAPIView):
-    serializer_class = CategorySerializer
-    permission_classes = [permissions.AllowAny]
-    queryset = Category.objects.filter(is_active=True)
-    lookup_field = 'slug'
+    pagination_class = None

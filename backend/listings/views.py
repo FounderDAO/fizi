@@ -1,72 +1,97 @@
-from rest_framework import generics, permissions, status, filters
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from django.db.models import Q
 from .models import Listing, Favorite
-from .serializers import ListingSerializer, ListingCreateSerializer, FavoriteSerializer
+from .serializers import ListingListSerializer, ListingDetailSerializer
 
 
 class ListingListView(generics.ListAPIView):
-    serializer_class = ListingSerializer
+    serializer_class = ListingListSerializer
     permission_classes = [permissions.AllowAny]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'city', 'condition', 'status', 'is_promoted']
-    search_fields = ['title', 'description']
-    ordering_fields = ['price', 'created_at', 'views']
 
     def get_queryset(self):
-        return Listing.objects.filter(status='active').select_related('user', 'category').prefetch_related('photos')
+        qs = Listing.objects.filter(status='active').select_related('user', 'category').prefetch_related('photos')
+
+        # Filters
+        category = self.request.query_params.get('category')
+        city = self.request.query_params.get('city')
+        price_min = self.request.query_params.get('price_min')
+        price_max = self.request.query_params.get('price_max')
+        condition = self.request.query_params.get('condition')
+        q = self.request.query_params.get('q')
+
+        if category:
+            qs = qs.filter(Q(category__slug=category) | Q(category__parent__slug=category))
+        if city:
+            qs = qs.filter(city__icontains=city)
+        if price_min:
+            qs = qs.filter(price__gte=price_min)
+        if price_max:
+            qs = qs.filter(price__lte=price_max)
+        if condition:
+            qs = qs.filter(condition=condition)
+        if q:
+            qs = qs.filter(
+                Q(title__icontains=q) |
+                Q(description__icontains=q) |
+                Q(city__icontains=q)
+            )
+
+        return qs.order_by('-is_promoted', '-created_at')
 
 
 class ListingCreateView(generics.CreateAPIView):
-    serializer_class = ListingCreateSerializer
+    serializer_class = ListingDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
 
 class ListingDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ListingSerializer
     queryset = Listing.objects.all()
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+    def get_serializer_class(self):
+        return ListingDetailSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        # Increment views
-        Listing.objects.filter(pk=instance.pk).update(views=instance.views + 1)
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    def get_object(self):
+        obj = super().get_object()
+        # Increment views on GET
+        if self.request.method == 'GET':
+            Listing.objects.filter(pk=obj.pk).update(views=obj.views + 1)
+        return obj
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
 
 
 class MyListingsView(generics.ListAPIView):
-    serializer_class = ListingSerializer
+    serializer_class = ListingListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Listing.objects.filter(user=self.request.user)
+        return Listing.objects.filter(user=self.request.user).order_by('-created_at')
 
 
 class FavoriteToggleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        listing = generics.get_object_or_404(Listing, pk=pk)
+        listing = Listing.objects.get(pk=pk)
         fav, created = Favorite.objects.get_or_create(user=request.user, listing=listing)
         if not created:
             fav.delete()
             return Response({'favorited': False})
-        return Response({'favorited': True}, status=status.HTTP_201_CREATED)
+        return Response({'favorited': True})
 
 
 class FavoriteListView(generics.ListAPIView):
-    serializer_class = FavoriteSerializer
+    serializer_class = ListingListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user).select_related('listing')
+        return Listing.objects.filter(
+            favorited_by__user=self.request.user
+        ).order_by('-favorited_by__created_at')

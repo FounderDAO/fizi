@@ -1,24 +1,22 @@
 from django.test import TestCase
+from rest_framework.test import APIClient
 from .models import Category
 
 
-class CategoryModelTest(TestCase):
-    def test_create_root_category(self):
-        cat = Category.objects.create(
+class TestCategories(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        Category.objects.create(
             name_ru='Электроника', name_uz='Elektronika', name_en='Electronics',
-            slug='electronics'
+            slug='electronics', icon='📱', order=1
         )
-        self.assertIsNone(cat.parent)
-        self.assertTrue(cat.is_active)
 
-    def test_create_child_category(self):
-        parent = Category.objects.create(
-            name_ru='Электроника', name_uz='Elektronika', name_en='Electronics',
-            slug='electronics'
-        )
-        child = Category.objects.create(
-            name_ru='Телефоны', name_uz='Telefonlar', name_en='Phones',
-            slug='phones', parent=parent
-        )
-        self.assertEqual(child.parent, parent)
-        self.assertIn(child, parent.children.all())
+    def test_category_list(self):
+        response = self.client.get('/api/v1/categories/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+
+    def test_category_tree(self):
+        response = self.client.get('/api/v1/categories/tree/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, list)

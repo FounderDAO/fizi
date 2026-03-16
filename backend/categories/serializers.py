@@ -7,17 +7,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name_ru', 'name_uz', 'name_en', 'slug', 'parent',
-                  'icon', 'order', 'is_active', 'children']
+        fields = ['id', 'name_ru', 'name_uz', 'name_en', 'slug', 'icon', 'parent', 'children']
 
     def get_children(self, obj):
-        if obj.children.exists():
-            return CategorySerializer(obj.children.filter(is_active=True), many=True).data
-        return []
+        children = obj.children.filter(is_active=True)
+        return CategorySerializer(children, many=True).data
 
 
 class CategoryFlatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name_ru', 'name_uz', 'name_en', 'slug', 'parent',
-                  'icon', 'order', 'is_active']
+        fields = ['id', 'name_ru', 'name_uz', 'name_en', 'slug', 'icon', 'parent']
