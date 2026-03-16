@@ -27,11 +27,13 @@ class ListingListSerializer(serializers.ModelSerializer):
     cover_photo = serializers.SerializerMethodField()
     author = AuthorSerializer(source='user', read_only=True)
     is_favorite = serializers.SerializerMethodField()
+    created_at_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
         fields = ['id', 'title', 'price', 'currency', 'city', 'condition',
-                  'cover_photo', 'author', 'is_favorite', 'views', 'created_at', 'is_promoted']
+                  'cover_photo', 'author', 'is_favorite', 'views', 'created_at',
+                  'created_at_display', 'is_promoted', 'is_credit', 'seller_type']
 
     def get_cover_photo(self, obj):
         photo = obj.photos.first()
@@ -46,6 +48,19 @@ class ListingListSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.favorited_by.filter(user=request.user).exists()
         return False
+
+    def get_created_at_display(self, obj):
+        from django.utils import timezone
+        now = timezone.now()
+        diff = now - obj.created_at
+        if diff.days == 0:
+            local_time = timezone.localtime(obj.created_at)
+            return f"Сегодня в {local_time.strftime('%H:%M')}"
+        elif diff.days == 1:
+            local_time = timezone.localtime(obj.created_at)
+            return f"Вчера в {local_time.strftime('%H:%M')}"
+        else:
+            return obj.created_at.strftime('%-d %b %Y')
 
 
 class ListingDetailSerializer(serializers.ModelSerializer):
@@ -62,8 +77,8 @@ class ListingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = ['id', 'title', 'description', 'price', 'currency', 'city', 'district',
-                  'condition', 'status', 'category', 'category_id', 'author',
-                  'photos', 'uploaded_photos', 'is_favorite', 'views', 'is_promoted',
+                  'condition', 'status', 'seller_type', 'is_credit', 'category', 'category_id',
+                  'author', 'photos', 'uploaded_photos', 'is_favorite', 'views', 'is_promoted',
                   'created_at', 'updated_at']
         read_only_fields = ['id', 'author', 'views', 'is_promoted', 'created_at', 'updated_at']
 

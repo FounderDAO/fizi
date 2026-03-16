@@ -14,6 +14,10 @@ class Listing(models.Model):
         NEW = 'new', 'Новое'
         USED = 'used', 'Б/у'
 
+    class SellerType(models.TextChoices):
+        PRIVATE = 'private', 'Частное'
+        BUSINESS = 'business', 'Бизнес'
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=15, decimal_places=2)
@@ -26,6 +30,8 @@ class Listing(models.Model):
     district = models.CharField(max_length=100, blank=True)
     condition = models.CharField(max_length=10, choices=Condition.choices, default=Condition.USED)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    seller_type = models.CharField(max_length=20, choices=SellerType.choices, default=SellerType.PRIVATE)
+    is_credit = models.BooleanField(default=False, verbose_name='Рассрочка/Nasiya')
     views = models.IntegerField(default=0)
     is_promoted = models.BooleanField(default=False)
     promoted_until = models.DateTimeField(null=True, blank=True)

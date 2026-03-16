@@ -22,6 +22,9 @@ class ListingListView(generics.ListAPIView):
         condition = self.request.query_params.get('condition')
         q = self.request.query_params.get('q')
 
+        has_photo = self.request.query_params.get('has_photo')
+        seller_type = self.request.query_params.get('seller_type')
+
         if category:
             qs = qs.filter(Q(category__slug=category) | Q(category__parent__slug=category))
         if city:
@@ -38,6 +41,10 @@ class ListingListView(generics.ListAPIView):
                 Q(description__icontains=q) |
                 Q(city__icontains=q)
             )
+        if has_photo == 'true':
+            qs = qs.filter(photos__isnull=False).distinct()
+        if seller_type in ('private', 'business'):
+            qs = qs.filter(seller_type=seller_type)
 
         return qs.order_by('-is_promoted', '-created_at')
 

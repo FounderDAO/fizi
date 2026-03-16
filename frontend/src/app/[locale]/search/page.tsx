@@ -18,6 +18,7 @@ function SearchContent() {
   const [priceMin, setPriceMin] = useState(searchParams.get('price_min') || '');
   const [priceMax, setPriceMax] = useState(searchParams.get('price_max') || '');
   const [condition, setCondition] = useState(searchParams.get('condition') || '');
+  const [hasPhoto, setHasPhoto] = useState(searchParams.get('has_photo') === 'true');
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
 
@@ -33,6 +34,7 @@ function SearchContent() {
     if (priceMin) params.price_min = priceMin;
     if (priceMax) params.price_max = priceMax;
     if (condition) params.condition = condition;
+    if (hasPhoto) params.has_photo = 'true';
     return params;
   };
 
@@ -43,7 +45,7 @@ function SearchContent() {
   };
 
   const clearFilters = () => {
-    setCategory(''); setCity(''); setPriceMin(''); setPriceMax(''); setCondition('');
+    setCategory(''); setCity(''); setPriceMin(''); setPriceMax(''); setCondition(''); setHasPhoto(false);
   };
 
   const filterParams = buildParams();
@@ -96,6 +98,11 @@ function SearchContent() {
             <option value="new">Новое</option>
             <option value="used">Б/у</option>
           </select>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={hasPhoto} onChange={e => setHasPhoto(e.target.checked)}
+              className="w-4 h-4 accent-indigo-600" />
+            <span className="text-sm">Только с фото</span>
+          </label>
           <button onClick={clearFilters} className="flex items-center gap-1 text-red-500 text-sm">
             <X className="w-4 h-4" /> Сбросить
           </button>

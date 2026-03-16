@@ -12,7 +12,10 @@ interface ListingCardProps {
   cover_photo?: string;
   views: number;
   created_at: string;
+  created_at_display?: string;
   is_promoted?: boolean;
+  is_credit?: boolean;
+  seller_type?: string;
 }
 
 export default function ListingCard({
@@ -24,7 +27,9 @@ export default function ListingCard({
   condition,
   cover_photo,
   views,
+  created_at_display,
   is_promoted,
+  is_credit,
 }: ListingCardProps) {
   const locale = useLocale();
 
@@ -52,6 +57,11 @@ export default function ListingCard({
               VIP
             </span>
           )}
+          {is_credit && (
+            <span className="absolute bottom-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              Nasiya
+            </span>
+          )}
           <button className="absolute top-2 right-2 bg-white/80 rounded-full p-1.5 hover:bg-white">
             <Heart className="w-4 h-4 text-gray-500" />
           </button>
@@ -70,6 +80,9 @@ export default function ListingCard({
               <span>{views}</span>
             </div>
           </div>
+          {created_at_display && (
+            <span className="text-xs text-gray-400 mt-1 block">{created_at_display}</span>
+          )}
         </div>
       </div>
     </Link>
