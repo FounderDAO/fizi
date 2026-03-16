@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "home": "Bosh sahifa",
+    "search": "Qidirish",
+    "post": "E'lon berish",
+    "favorites": "Sevimlilar",
+    "messages": "Xabarlar",
+    "profile": "Profil",
+    "login": "Kirish"
+  },
+  "home": {
+    "title": "Fizi.uz — O'zbekistonda sotib ol va sot",
+    "subtitle": "Millionlab e'lonlar. Aqlli qidiruv. Xavfsiz bitimlar.",
+    "search_placeholder": "Mahsulot qidirish...",
+    "categories": "Kategoriyalar",
+    "latest": "Yangi e'lonlar"
+  },
+  "listing": {
+    "price": "Narx",
+    "condition": "Holat",
+    "new": "Yangi",
+    "used": "Ishlatilgan",
+    "city": "Shahar",
+    "contact_seller": "Sotuvchiga yozish",
+    "add_favorite": "Sevimlilarga",
+    "views": "ko'rishlar"
+  },
+  "auth": {
+    "enter_phone": "Telefon raqamingizni kiriting",
+    "enter_otp": "SMS kodini kiriting",
+    "send_code": "Kod yuborish",
+    "verify": "Tasdiqlash",
+    "login_title": "Fiziga kirish",
+    "phone_placeholder": "+998 90 123 45 67"
+  },
+  "create_listing": {
+    "title": "E'lon berish",
+    "step_category": "Kategoriya",
+    "step_photos": "Rasm va video",
+    "step_details": "Tavsif",
+    "step_price": "Narx va kontaktlar",
+    "publish": "Nashr qilish"
+  }
+}

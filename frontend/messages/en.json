@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "post": "Post Ad",
+    "favorites": "Favorites",
+    "messages": "Messages",
+    "profile": "Profile",
+    "login": "Login"
+  },
+  "home": {
+    "title": "Fizi.uz — Buy & Sell in Uzbekistan",
+    "subtitle": "Millions of listings. Smart search. Secure deals.",
+    "search_placeholder": "Search for items...",
+    "categories": "Categories",
+    "latest": "Latest listings"
+  },
+  "listing": {
+    "price": "Price",
+    "condition": "Condition",
+    "new": "New",
+    "used": "Used",
+    "city": "City",
+    "contact_seller": "Contact Seller",
+    "add_favorite": "Add to Favorites",
+    "views": "views"
+  },
+  "auth": {
+    "enter_phone": "Enter your phone number",
+    "enter_otp": "Enter SMS code",
+    "send_code": "Send code",
+    "verify": "Verify",
+    "login_title": "Login to Fizi",
+    "phone_placeholder": "+998 90 123 45 67"
+  },
+  "create_listing": {
+    "title": "Post an Ad",
+    "step_category": "Category",
+    "step_photos": "Photos & Video",
+    "step_details": "Description",
+    "step_price": "Price & Contacts",
+    "publish": "Publish"
+  }
+}

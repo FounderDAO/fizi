@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "home": "Главная",
+    "search": "Поиск",
+    "post": "Подать объявление",
+    "favorites": "Избранное",
+    "messages": "Сообщения",
+    "profile": "Профиль",
+    "login": "Войти"
+  },
+  "home": {
+    "title": "Fizi.uz — купи и продай в Узбекистане",
+    "subtitle": "Миллионы объявлений. Умный поиск. Безопасные сделки.",
+    "search_placeholder": "Найти товар...",
+    "categories": "Категории",
+    "latest": "Свежие объявления"
+  },
+  "listing": {
+    "price": "Цена",
+    "condition": "Состояние",
+    "new": "Новое",
+    "used": "Б/у",
+    "city": "Город",
+    "contact_seller": "Написать продавцу",
+    "add_favorite": "В избранное",
+    "views": "просмотров"
+  },
+  "auth": {
+    "enter_phone": "Введите номер телефона",
+    "enter_otp": "Введите код из SMS",
+    "send_code": "Отправить код",
+    "verify": "Подтвердить",
+    "login_title": "Войти в Fizi",
+    "phone_placeholder": "+998 90 123 45 67"
+  },
+  "create_listing": {
+    "title": "Подать объявление",
+    "step_category": "Категория",
+    "step_photos": "Фото и видео",
+    "step_details": "Описание",
+    "step_price": "Цена и контакты",
+    "publish": "Опубликовать"
+  }
+}
